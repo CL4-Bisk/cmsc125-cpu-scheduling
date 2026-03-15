@@ -10,7 +10,13 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include "../include/process.h"
+#include "../include/scheduler.h"
+#include "../include/gantt.h"
+#include "../include/metrics.h"
+
 int main()
 {
+    
     return 0;
 }

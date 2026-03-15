@@ -26,3 +26,8 @@ void calculate_metrics(SchedulerState *state)
     }
 }
 
+void print_metrics(SchedulerState *state)
+{
+    // Implementation to print metrics for each process and overall averages
+    // This function iterates through the processes in the SchedulerState, prints the turnaround time, waiting time, and response time for each process, and the overall average metrics if needed.
+}

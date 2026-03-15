@@ -5,7 +5,16 @@ CFLAGS = -Wall -Wextra -std=c11
 
 
 TARGET = schedsim
-SRCS = 
+SRCS = src/main.c      \
+       src/fcfs.c      \
+       src/sjf.c       \
+       src/stcf.c      \
+       src/rr.c        \
+       src/mlfq.c      \
+       src/gantt.c     \
+       src/metrics.c   \
+       src/process.c   \
+       src/scheduler.c
 
 OBJS = $(SRCS:.c=.o)
 

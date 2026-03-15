@@ -44,5 +44,11 @@ typedef struct Event {
     struct Event *next;
 } Event;
 
+typedef struct GanttEntry {
+    char pid[16];               // Process identifier
+    int start_time;             // When first executed
+    int end_time;               // When completed
+    struct GanttEntry *next;    // Array or linked list of Gantt entries
+} GanttEntry;
 
 #endif

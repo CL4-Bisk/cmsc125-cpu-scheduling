@@ -18,3 +18,25 @@ Process *load_processes(const char *filename, int *num_processes)
 
     return NULL; // Placeholder return
 }
+
+void print_process(Process *proc)
+{
+    printf("Process %s:\n", proc->pid);
+    printf("    Arrival Time:   %d\n", proc->arrival_time);
+    printf("    Burst Time:     %d\n", proc->burst_time);
+    printf("    Finish Time:     %d\n", proc->finish_time);
+
+    int turnaround_time = proc->finish_time - proc->arrival_time;
+    int waiting_time = turnaround_time - proc->burst_time;
+    int response_time = proc->start_time - proc->arrival_time;
+
+    printf("    Turnaround Time: %d - %d = %d\n",
+           proc->finish_time, proc->arrival_time, turnaround_time);
+
+    printf("    Waiting Time: %d - %d = %d\n",
+           turnaround_time, proc->burst_time, waiting_time);
+
+    printf("    Response Time: %d - %d = %d\n",
+           proc->start_time, proc->arrival_time, response_time);
+    printf("\n");
+}

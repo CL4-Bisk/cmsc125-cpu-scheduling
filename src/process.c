@@ -10,6 +10,9 @@
 
 Process *load_processes(const char *filename, int *num_processes)
 {
+
+	sprintf(MAX_LINE, sizeof(MAX_LINE), "tests/%s", filename);
+
 	FILE *file = fopen(filename, "r");
 	if (file == NULL) {
 		fprintf(stderr, "Error: Could not open file '%s'\n", filename);

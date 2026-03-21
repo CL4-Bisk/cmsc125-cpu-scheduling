@@ -4,15 +4,15 @@
 #include "process.h"
 
 #define DEFAULT_QUANTUM 30
-#define MAX_LINE        256
 
-typedef struct {
-    Process *processes;     // Array of all processes
-    int num_processes;      // Number of processes
-    int current_time;       // Current simulation time
-    // ... additional fields for metrics, Gantt chart, etc.
-    // Recall: CMSC 141
-} SchedulerState;
+
+    typedef struct {
+        Process *processes;     // Array of all processes
+        int num_processes;      // Number of processes
+        int current_time;       // Current simulation time
+        // ... additional fields for metrics, Gantt chart, etc.
+        // Recall: CMSC 141
+    } SchedulerState;
 
 typedef struct {
     int level;              // Queue priority level (0 = highest)

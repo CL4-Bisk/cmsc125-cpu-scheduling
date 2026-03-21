@@ -7,16 +7,64 @@
 #include <string.h>
 #include "../include/process.h"
 
-// Additional functions for process management can be implemented here
 Process *load_processes(const char *filename, int *num_processes)
 {
-    /*
-     * Implementation to load processes from a file
-     * This function reads process data from a specified file and returns an array of Process structs.
-     * The number of processes loaded is stored in the variable pointed to by num_processes.
-     */
+	FILE *file = fopen(filename, "r");
+	if (file == NULL) {
+		fprintf(stderr, "Error: Could not open file '%s'\n", filename);
+		return NULL;
+	}
 
-    return NULL; // Placeholder return
+	int starting_capacity = 4;          
+	int count = 0;
+
+	Process *processes = malloc(starting_capacity * sizeof(Process));
+	if (processes == NULL) {
+		fprintf(stderr, "Error: Memory allocation failed\n");
+		fclose(file);
+		return NULL;
+	}
+
+	char line[MAX_LINE];
+
+	while (fgets(line, MAX_LINE, file) != NULL) {
+		char pid[16];
+		int at, bt;
+
+		if (sscanf(line, "%15s %d %d", pid, &at, &bt) != 3) {
+            fprintf(stderr, "Warning: Skipping malformed line: %s", line);
+            continue;
+        }
+
+		if (count == starting_capacity) {
+			starting_capacity *= 2;
+			Process *temp = realloc(processes, starting_capacity * sizeof(Process));
+			if (temp == NULL) {
+				fprintf(stderr, "Error: Memory reallocation failed\n");
+				free(processes);
+				fclose(file);
+				return NULL;
+			}
+			processes = temp;
+		}
+
+		strncpy(processes[count].pid, pid, sizeof(processes[count].pid) - 1);
+		processes[count].pid[15]        = '\0';
+		processes[count].arrival_time   = at;
+		processes[count].burst_time     = bt;
+		processes[count].remaining_time = bt;
+		processes[count].start_time     = -1;
+		processes[count].finish_time    = -1;
+		processes[count].waiting_time   = 0;
+		processes[count].priority       = 0;
+		processes[count].time_in_queue  = 0;
+
+		count++;
+	}
+
+	fclose(file);
+	*num_processes = count;
+	return processes;
 }
 
 

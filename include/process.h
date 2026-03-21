@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #define MAX_PROCESSES   100
+#define MAX_LINE        256
 
 typedef struct {
     char pid[16];           // Process identifier
@@ -16,5 +17,7 @@ typedef struct {
     int priority;           // For MLFQ
     int time_in_queue;      // For MLFQ allotment tracking
 } Process;
+
+Process *load_processes(const char *filename, int *num_processes);
 
 #endif

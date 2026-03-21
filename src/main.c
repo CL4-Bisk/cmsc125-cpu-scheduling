@@ -22,20 +22,27 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Example: %s workload.txt\n", argv[0]);
         return 1;
     }
+    
+    int num_processes = 0;
+    Process *processes = load_processes(argv[1], &num_processes);
 
-    FILE *fp = fopen(argv[1], "r");
-    if (fp == NULL) {
-        fprintf(stderr, "Error: Could not open file '%s'\n", argv[1]);
-        return 1;
+    SchedulerState state = {
+        .processes = processes,
+        .num_processes = num_processes,
+        .current_time  = 0
+    };
+
+    printf("Loaded %d process(es):\n\n", state.num_processes);
+    printf("%-10s %-15s %-10s\n", "PID", "Arrival", "Burst");
+    printf("-----------------------------------\n");
+    for (int i = 0; i < state.num_processes; i++) {
+        printf("%-10s %-15d %-10d\n",
+               state.processes[i].pid,
+               state.processes[i].arrival_time,
+               state.processes[i].burst_time);
     }
 
-    char line[MAX_LINE];
-
-    while (fgets(line, sizeof(line), fp) != NULL) {
-        printf("%s", line);
-    }
-
-    fclose(fp);
+    free(processes);
     return 0;
 }
 

@@ -15,8 +15,7 @@
 #include "../include/gantt.h"
 #include "../include/metrics.h"
 
-int main()
+int main(int argc, char *argv[])
 {
-    
-    return 0;
 }
+

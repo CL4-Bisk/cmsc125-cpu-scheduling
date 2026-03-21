@@ -19,6 +19,20 @@ Process *load_processes(const char *filename, int *num_processes)
     return NULL; // Placeholder return
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void print_process(Process *proc)
 {
     printf("Process %s:\n", proc->pid);

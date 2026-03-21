@@ -7,7 +7,7 @@
 #include <string.h>
 #include "../include/metrics.h"
 
-void calculate_metrics(SchedulerState *state)
+void calculate_metrics(SchedulerState* state)
 {
     /*
      * Implementation to calculate metrics for each process and overall averages.

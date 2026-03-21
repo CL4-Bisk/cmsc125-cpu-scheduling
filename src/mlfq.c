@@ -9,7 +9,7 @@
 #include "../include/scheduler.h"
 #include "../include/metrics.h"
 
-int schedule_mlfq(SchedulerState *state, MLFQConfig *config)
+int schedule_mlfq(SchedulerState *state) //, MLFQConfig *config)
 {
     // Implementation for MLFQ scheduling
 

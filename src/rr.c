@@ -28,6 +28,12 @@ int schedule_rr(SchedulerState *state, int quantum)
             Process *proc = &state->processes[i];
             if (proc->arrival_time <= time && proc->remaining_time > 0)
             {
+
+                if (proc->remaining_time == proc->burst_time)
+                {
+                    proc->start_time = time; // First time the process is executed
+                }
+
                 if (proc->remaining_time > quantum)
                 {
                     time += quantum;

@@ -7,9 +7,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-
 #include "../include/process.h"
 #include "../include/scheduler.h"
 
@@ -23,6 +20,9 @@ int main(int argc, char *argv[])
     
     int num_processes = 0;
     Process *processes = load_processes(argv[1], &num_processes);
+    if (processes == NULL) {
+        return 1;
+    }
 
     SchedulerState state = {
         .processes = processes,
@@ -30,25 +30,25 @@ int main(int argc, char *argv[])
         .current_time  = 0
     };
 
-    if(schedule_fcfs(&state)){
+    if(schedule_fcfs(&state) == 0){
         printf("Successful: FCFS");
     } else {
         printf("Unsuccessful: FCFS");
     }
-    if(schedule_sjf(&state)){
-        printf("Successful: FCFS");
+    if(schedule_sjf(&state) == 0){
+        printf("Successful: SJF");
     } else {
-        printf("Unsuccessful: FCFS");
+        printf("Unsuccessful: SJF");
     }
-    if(schedule_stcf(&state)){
-        printf("Successful: FCFS");
+    if(schedule_stcf(&state) == 0){
+        printf("Successful: STCF");
     } else {
-        printf("Unsuccessful: FCFS");
+        printf("Unsuccessful: STCF");
     }
-    if(schedule_rr(&state, DEFAULT_QUANTUM)){
-        printf("Successful: FCFS");
+    if(schedule_rr(&state, DEFAULT_QUANTUM) == 0){
+        printf("Successful: RR");
     } else {
-        printf("Unsuccessful: FCFS");
+        printf("Unsuccessful: RR");
     }
 
     free(processes);

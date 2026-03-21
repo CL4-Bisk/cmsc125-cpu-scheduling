@@ -4,7 +4,7 @@
 #include "process.h"
 
 #define DEFAULT_QUANTUM 30
-
+#define MAX_LINE        256
 
 typedef struct {
     Process *processes;     // Array of all processes

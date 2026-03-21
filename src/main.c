@@ -12,8 +12,6 @@
 
 #include "../include/process.h"
 #include "../include/scheduler.h"
-#include "../include/gantt.h"
-#include "../include/metrics.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,14 +30,25 @@ int main(int argc, char *argv[])
         .current_time  = 0
     };
 
-    printf("Loaded %d process(es):\n\n", state.num_processes);
-    printf("%-10s %-15s %-10s\n", "PID", "Arrival", "Burst");
-    printf("-----------------------------------\n");
-    for (int i = 0; i < state.num_processes; i++) {
-        printf("%-10s %-15d %-10d\n",
-               state.processes[i].pid,
-               state.processes[i].arrival_time,
-               state.processes[i].burst_time);
+    if(schedule_fcfs(&state)){
+        printf("Successful: FCFS");
+    } else {
+        printf("Unsuccessful: FCFS");
+    }
+    if(schedule_sjf(&state)){
+        printf("Successful: FCFS");
+    } else {
+        printf("Unsuccessful: FCFS");
+    }
+    if(schedule_stcf(&state)){
+        printf("Successful: FCFS");
+    } else {
+        printf("Unsuccessful: FCFS");
+    }
+    if(schedule_rr(&state, DEFAULT_QUANTUM)){
+        printf("Successful: FCFS");
+    } else {
+        printf("Unsuccessful: FCFS");
     }
 
     free(processes);

@@ -4,8 +4,10 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "../include/gantt.h"
+#include <string.h>
 #include "../include/scheduler.h"
+#include "../include/gantt.h"
+#include "../include/metrics.h"
 
 int schedule_fcfs(SchedulerState *state)
 {

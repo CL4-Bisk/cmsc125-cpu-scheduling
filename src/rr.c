@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/gantt.h"
 #include "../include/scheduler.h"
+#include "../include/gantt.h"
 #include "../include/metrics.h"
 
 int schedule_rr(SchedulerState *state, int quantum)

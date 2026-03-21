@@ -9,9 +9,8 @@
 #include "../include/scheduler.h"
 #include "../include/metrics.h"
 
-int schedule_sjf(SchedulerState *state)
-{
-    // Implementation for SJF scheduling
+int schedule_sjf(SchedulerState *state) {
+    // Implementation for Shortest job first scheduling
 
     return 0;
 }

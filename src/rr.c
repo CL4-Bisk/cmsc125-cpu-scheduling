@@ -14,11 +14,11 @@ int schedule_rr(SchedulerState *state, int quantum)
     // Implementation for Round-robin scheduling
     int time = 0;
     int completed = 0;
-    int remaining_times[state->num_processes];
+    int num_processes = state->num_processes;
 
-    for (int i = 0; i < state->num_processes; i++)
+    for (int i = 0; i < num_processes; i++)
     {
-        remaining_times[i] = state->processes[i].burst_time;
+        state->processes[i].remaining_time = state->processes[i].burst_time;
     }
 
     while (completed < state->num_processes)
@@ -26,18 +26,18 @@ int schedule_rr(SchedulerState *state, int quantum)
         for (int i = 0; i < state->num_processes; i++)
         {
             Process *proc = &state->processes[i];
-            if (proc->arrival_time <= time && remaining_times[i] > 0)
+            if (proc->arrival_time <= time && proc->remaining_time > 0)
             {
-                if (remaining_times[i] > quantum)
+                if (proc->remaining_time > quantum)
                 {
                     time += quantum;
-                    remaining_times[i] -= quantum;
+                    proc->remaining_time -= quantum;
                 }
                 else
                 {
-                    time += remaining_times[i];
+                    time += proc->remaining_time;
                     proc->finish_time = time;
-                    remaining_times[i] = 0;
+                    proc->remaining_time = 0;
                     completed++;
                 }
             }

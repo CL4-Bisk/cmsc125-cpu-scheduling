@@ -23,6 +23,7 @@ void calculate_metrics(SchedulerState* state)
         Process *p = &state->processes[i];
         int tt = p->finish_time - p->arrival_time;
         p->waiting_time = tt - p->burst_time;
+        int rt = p->start_time - p->arrival_time;
     }
 }
 

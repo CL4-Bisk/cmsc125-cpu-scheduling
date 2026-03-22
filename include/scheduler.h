@@ -55,6 +55,7 @@ int schedule_fcfs(SchedulerState *state);
 int schedule_sjf(SchedulerState *state);
 int schedule_stcf(SchedulerState *state);
 int schedule_rr(SchedulerState *state, int quantum);
+int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config);
 // int schedule_mlfq(SchedulerState *state, MLFQConfig *config);
 
 #endif

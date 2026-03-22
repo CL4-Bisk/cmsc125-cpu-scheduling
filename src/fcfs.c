@@ -21,8 +21,8 @@ int schedule_fcfs(SchedulerState *state)
             time = proc->arrival_time; // Wait for the process to arrive
         }
         proc->start_time = time;
-        proc->finish_time = time + proc->burst_time; // Run the process to completion
-        time += proc->burst_time;                    // Move time forward by the burst time
+        proc->finish_time = time + proc->burst_time;                // Run the process to completion
+        time += proc->burst_time;                                   // Move time forward by the burst time
     }
     return 0;
 }

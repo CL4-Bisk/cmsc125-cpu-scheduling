@@ -17,9 +17,18 @@ int schedule_stcf(SchedulerState *state)
     int completed = 0;
     int num_processes = state->num_processes;
 
+    int first_process = state->processes[0].arrival_time;
     for (int i = 0; i < num_processes; i++)
     {
-        state->processes[i].remaining_time = state->processes[i].burst_time;
+        if (state->processes[i].arrival_time < first_process)
+        {
+            first_process = state->processes[i].arrival_time;
+        }
+    }
+
+    if (first_process > 0)
+    {
+        time = first_process; // Start at the arrival time of the first process
     }
 
     while (completed < num_processes)
@@ -29,35 +38,40 @@ int schedule_stcf(SchedulerState *state)
 
         for (int i = 0; i < num_processes; i++)
         {
-            if (state->processes[i].arrival_time <= time && state->processes[i].remaining_time > 0)
+            Process *proc = &state->processes[i];
+            if (proc->arrival_time <= time && proc->remaining_time > 0)
             {
-                if (shortest_remaining_time == -1 || state->processes[i].remaining_time < shortest_remaining_time)
-                {
-                    shortest_remaining_time = state->processes[i].remaining_time;
-                    shortest_remaining_time_index = i;
-                }
+                continue; // Found a process with shorter remaining time, keep looking
+            }
+            if (shortest_remaining_time == -1 || proc->remaining_time < shortest_remaining_time)
+            {
+                shortest_remaining_time = proc->remaining_time;
+                shortest_remaining_time_index = i;
             }
         }
 
         if (shortest_remaining_time_index == -1)
         {
-            time++;
-        }
-        else
-        {
-            Process *proc = &state->processes[shortest_remaining_time_index];
-            if (proc->remaining_time == proc->burst_time)
+            int next_process = -1;
+            for (int i = 0; i < num_processes; i++)
             {
-                proc->start_time = time; // First time the process is executed
+                if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time <= time)
+                {
+                    if (next_process == -1 || state->processes[i].arrival_time < state->processes[next_process].arrival_time)
+                    {
+                        next_process = i;
+                    }
+                }
             }
-            proc->remaining_time--;
-            time++;
 
-            if (proc->remaining_time == 0)
-            {
-                proc->finish_time = time;
-                completed++;
-            }
+            time = next_process;
+            continue; // No process ready, move time forward to the next arrival time
+        }
+
+        Process *proc = &state->processes[shortest_remaining_time_index];
+        if (proc->start_time == -1)
+        {
+            proc->start_time = time; // First time the process is executed
         }
     }
     calculate_metrics(state);

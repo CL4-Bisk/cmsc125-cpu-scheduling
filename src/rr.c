@@ -16,9 +16,18 @@ int schedule_rr(SchedulerState *state, int quantum)
     int completed = 0;
     int num_processes = state->num_processes;
 
+    int first_process = state->processes[0].arrival_time;
     for (int i = 0; i < num_processes; i++)
     {
-        state->processes[i].remaining_time = state->processes[i].burst_time;
+        if (state->processes[i].arrival_time < first_process)
+        {
+            first_process = state->processes[i].arrival_time;
+        }
+
+        if (first_process > 0)
+        {
+            time = first_process; // Start at the arrival time of the first process
+        }
     }
 
     while (completed < state->num_processes)

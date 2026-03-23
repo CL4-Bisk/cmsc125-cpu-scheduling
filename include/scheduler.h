@@ -7,16 +7,6 @@
 
 typedef struct
 {
-    Process *processes; // Array of all processes
-    int num_processes;  // Number of processes
-    int current_time;   // Current simulation time
-    // ... additional fields for metrics, Gantt chart, etc.
-    // Recall: CMSC 141
-    int context_switches; // Total number of context switches
-} SchedulerState;
-
-typedef struct
-{
     int level;        // Queue priority level (0 = highest)
     int time_quantum; // Time slice for this queue (-1 for FCFS)
     int allotment;    // Max time before demotion (-1 for infinite)
@@ -72,12 +62,21 @@ typedef struct GanttEntry
     struct GanttEntry *next; // Array or linked list of Gantt entries
 } GanttEntry;
 
+typedef struct
+{
+    Process *processes; // Array of all processes
+    int num_processes;  // Number of processes
+    int current_time;   // Current simulation time
+    // ... additional fields for metrics, Gantt chart, etc.
+    // Recall: CMSC 141
+    int context_switches; // Total number of context switches
+} SchedulerState;
+
 // Return 0 on success, -1 on error (command line etiquette)
 int schedule_fcfs(SchedulerState *state);
 int schedule_sjf(SchedulerState *state);
 int schedule_stcf(SchedulerState *state);
 int schedule_rr(SchedulerState *state, int quantum);
 int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config);
-// int schedule_mlfq(SchedulerState *state, MLFQConfig *config);
 
 #endif

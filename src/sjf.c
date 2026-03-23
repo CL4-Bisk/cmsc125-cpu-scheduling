@@ -37,27 +37,29 @@ int schedule_sjf(SchedulerState *state)
 
         if (shortest_burst_time_index == -1)
         {
-            int next_process = -1;
+            int next_arrival = -1;
             for (int i = 0; i < num_processes; i++)
             {
-                if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time <= time)
+                if (state->processes[i].remaining_time > 0 &&
+                    state->processes[i].arrival_time > time)  // hasn't arrived yet
                 {
-                    if (next_process == -1 || state->processes[i].arrival_time < state->processes[next_process].arrival_time)
+                    if (next_arrival == -1 ||
+                        state->processes[i].arrival_time < next_arrival)
                     {
-                        next_process = i;
+                        next_arrival = state->processes[i].arrival_time;
                     }
                 }
             }
 
-            if (next_process != -1)
+            if (next_arrival != -1)
             {
-                time = next_process; // Move time forward to the next process arrival
+                time = next_arrival;  // jump to next arrival
             }
             else
             {
-                break; // No more processes to run
+                break;  // no more processes
             }
-            continue; // No process ready, move time forward to the next arrival time
+            continue;
         }
         else
         {

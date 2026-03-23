@@ -201,7 +201,7 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
     for (int i = 0; i < num_queues; i++)
     {
         pq_free(&queues[i]);
-    }
+    }zz
     free(queues);
     free(admitted_processes);
 

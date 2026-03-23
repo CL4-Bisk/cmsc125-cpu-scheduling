@@ -55,7 +55,7 @@
                 int next_process = -1;
                 for (int i = 0; i < num_processes; i++)
                 {
-                    if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time <= time)
+                    if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time > time)
                     {
                         if (next_process == -1 || state->processes[i].arrival_time < state->processes[next_process].arrival_time)
                         {

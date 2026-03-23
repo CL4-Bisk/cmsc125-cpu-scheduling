@@ -47,6 +47,15 @@ typedef struct
     int capacity;        // Maximum capacity of the queue
 } ProcessQueue;
 
+typedef struct
+{
+    int *data;          // Placeholder for any additional data needed by schedulers
+    int head;
+    int tail;
+    int size;
+    int capacity;
+} IntQueue;
+
 typedef struct Event
 {
     int time;

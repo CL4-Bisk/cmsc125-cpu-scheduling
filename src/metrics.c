@@ -7,28 +7,6 @@
 #include <string.h>
 #include "../include/metrics.h"
 
-void calculate_metrics(SchedulerState* state)
-{
-    /*
-     * Implementation to calculate metrics for each process and overall averages.
-     *
-     * This function iterates through the processes in the SchedulerState,
-     * calculates the turnaround time, waiting time, and response time for each process,
-     * and stores these values in the provided ProcessMetrics array. It can also calculate
-     * the overall average metrics if needed.
-     */
-
-    for (int i = 0; i < state->num_processes; i++)
-    {
-        Process *p = &state->processes[i];
-
-        p->turnaround_time = p->finish_time - p->arrival_time;
-        p->waiting_time = p->turnaround_time - p->burst_time;
-        p->response_time = p->start_time - p->arrival_time;
-    }
-    print_metrics(state);
-}
-
 void print_metrics(SchedulerState *state)
 {
     // Implementation to print metrics for each process and overall averages
@@ -66,3 +44,27 @@ void print_metrics(SchedulerState *state)
            total_rt / n);
     printf("\n");
 }
+
+
+void calculate_metrics(SchedulerState* state)
+{
+    /*
+     * Implementation to calculate metrics for each process and overall averages.
+     *
+     * This function iterates through the processes in the SchedulerState,
+     * calculates the turnaround time, waiting time, and response time for each process,
+     * and stores these values in the provided ProcessMetrics array. It can also calculate
+     * the overall average metrics if needed.
+     */
+
+    for (int i = 0; i < state->num_processes; i++)
+    {
+        Process *p = &state->processes[i];
+
+        p->turnaround_time = p->finish_time - p->arrival_time;
+        p->waiting_time = p->turnaround_time - p->burst_time;
+        p->response_time = p->start_time - p->arrival_time;
+    }
+    print_metrics(state);
+}
+

@@ -31,27 +31,27 @@ int main(int argc, char *argv[])
     };
 
     if(schedule_fcfs(&state) == 0){
-        printf("Successful: FCFS");
+        printf("Successful: FCFS\n");
     } else {
-        printf("Unsuccessful: FCFS");
+        printf("Unsuccessful: FCFS\n");
     }
     reset_processes(processes, num_processes);
     if(schedule_sjf(&state) == 0){
-        printf("Successful: SJF");
+        printf("Successful: SJF\n");
     } else {
-        printf("Unsuccessful: SJF");
+        printf("Unsuccessful: SJF\n");
     }
     reset_processes(processes, num_processes);
     if(schedule_stcf(&state) == 0){
-        printf("Successful: STCF");
+        printf("Successful: STCF\n");
     } else {
-        printf("Unsuccessful: STCF");
+        printf("Unsuccessful: STCF\n");
     }
     reset_processes(processes, num_processes);
     if(schedule_rr(&state, DEFAULT_QUANTUM) == 0){
-        printf("Successful: RR");
+        printf("Successful: RR\n");
     } else {
-        printf("Unsuccessful: RR");
+        printf("Unsuccessful: RR\n");
     }
     reset_processes(processes, num_processes);
     free(processes);

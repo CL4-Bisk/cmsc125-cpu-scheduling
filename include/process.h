@@ -22,5 +22,6 @@ typedef struct {
 
 Process *load_processes(const char *filename, int *num_processes);
 void reset_processes(Process *processes, int num_processes);
+void sort_processes(Process *processes, int num_processes);
 
 #endif

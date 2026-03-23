@@ -12,17 +12,8 @@
 int schedule_fcfs(SchedulerState *state)
 {
     // Implementation for FCFS scheduling
+    sort_processes(state->processes, state->num_processes);
     
-    for (int i = 0; i < state->num_processes - 1; i++) {
-        for (int j = 0; j < state->num_processes - i - 1; j++) {
-            if (state->processes[j].arrival_time > state->processes[j+1].arrival_time) {
-                Process temp = state->processes[j];
-                state->processes[j] = state->processes[j+1];
-                state->processes[j+1] = temp;
-            }
-        }
-    }
-
     int time = 0;
     for (int i = 0; i < state->num_processes; i++)
     {

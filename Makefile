@@ -13,7 +13,8 @@ SRCS = src/main.c      \
        src/mlfq.c      \
        src/gantt.c     \
        src/metrics.c   \
-       src/process.c   
+       src/process.c   \
+       src/utils.c 
 
 OBJS = $(SRCS:.c=.o)
 

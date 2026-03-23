@@ -35,23 +35,27 @@ int main(int argc, char *argv[])
     } else {
         printf("Unsuccessful: FCFS");
     }
+    reset_processes(processes, num_processes);
     if(schedule_sjf(&state) == 0){
         printf("Successful: SJF");
     } else {
         printf("Unsuccessful: SJF");
     }
+    reset_processes(processes, num_processes);
     if(schedule_stcf(&state) == 0){
         printf("Successful: STCF");
     } else {
         printf("Unsuccessful: STCF");
     }
+    reset_processes(processes, num_processes);
     if(schedule_rr(&state, DEFAULT_QUANTUM) == 0){
         printf("Successful: RR");
     } else {
         printf("Unsuccessful: RR");
     }
-
+    reset_processes(processes, num_processes);
     free(processes);
+    printf("Run everything succesfully.");
     return 0;
 }
 

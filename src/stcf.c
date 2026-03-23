@@ -41,7 +41,7 @@ int schedule_stcf(SchedulerState *state)
             Process *proc = &state->processes[i];
             if (proc->arrival_time <= time && proc->remaining_time > 0)
             {
-                continue; // Found a process with shorter remaining time, keep looking
+                continue; // Found a process with shorter remaining time
             }
             if (shortest_remaining_time == -1 || proc->remaining_time < shortest_remaining_time)
             {

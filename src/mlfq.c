@@ -196,12 +196,12 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
             pq_push(&queues[proc->priority], proc); // Re-add to appropriate queue
         }
     }
-
+    calculate_metrics(state);
     // 6. Cleanup
     for (int i = 0; i < num_queues; i++)
     {
         pq_free(&queues[i]);
-    }zz
+    }
     free(queues);
     free(admitted_processes);
 

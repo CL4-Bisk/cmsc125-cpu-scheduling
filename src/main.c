@@ -54,6 +54,25 @@ int main(int argc, char *argv[])
         printf("Unsuccessful: RR\n");
     }
     reset_processes(processes, num_processes);
+    MLFQQueue mlfq_queues[3] = {
+        { .level = 0, .time_quantum = 10, .allotment = 50,  .queue = NULL, .size = 0 },
+        { .level = 1, .time_quantum = 30, .allotment = 150, .queue = NULL, .size = 0 },
+        { .level = 2, .time_quantum = -1, .allotment = -1,  .queue = NULL, .size = 0 }
+    };
+
+    MLFQScheduler mlfq = {
+        .queues       = mlfq_queues,
+        .num_queues   = 3,
+        .boost_period = 200,
+        .last_boost   = 0
+    };
+
+    if (schedule_mlfq(&state, &mlfq) == 0) {
+        printf("Successful: MLFQ\n");
+    } else {
+        printf("Unsuccessful: MLFQ\n");
+    }
+    reset_processes(processes, num_processes);
     free(processes);
     printf("Run everything succesfully.");
     return 0;

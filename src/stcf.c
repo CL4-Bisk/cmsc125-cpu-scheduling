@@ -42,12 +42,11 @@ int schedule_stcf(SchedulerState *state)
             Process *proc = &state->processes[i];
             if (proc->arrival_time <= time && proc->remaining_time > 0)
             {
-                continue; // Found a process with shorter remaining time
-            }
-            if (shortest_remaining_time == -1 || proc->remaining_time < shortest_remaining_time)
-            {
-                shortest_remaining_time = proc->remaining_time;
-                shortest_remaining_time_index = i;
+                if (shortest_remaining_time == -1 || proc->remaining_time < shortest_remaining_time)
+                {
+                    shortest_remaining_time = proc->remaining_time;
+                    shortest_remaining_time_index = i;
+                }
             }
         }
 
@@ -65,7 +64,14 @@ int schedule_stcf(SchedulerState *state)
                 }
             }
 
-            time = next_process;
+            if (next_process != -1)
+            {
+                time = next_process; // Move time forward to the next process arrival
+            }
+            else
+            {
+                break; // No more processes to run
+            }
             continue; // No process ready, move time forward to the next arrival time
         }
 

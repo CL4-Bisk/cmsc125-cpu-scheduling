@@ -16,6 +16,7 @@ int schedule_stcf(SchedulerState *state)
     int time = 0;
     int completed = 0;
     int num_processes = state->num_processes;
+    char last_pid[16] = "";
 
     int first_process = state->processes[0].arrival_time;
     for (int i = 0; i < num_processes; i++)
@@ -72,6 +73,22 @@ int schedule_stcf(SchedulerState *state)
         if (proc->start_time == -1)
         {
             proc->start_time = time; // First time the process is executed
+        }
+
+        if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
+        {
+            state->context_switches++; // Increment context switch count if switching to a different process
+        }
+        strncpy(last_pid, proc->pid, 15);
+        last_pid[15] = '\0';
+
+        proc->remaining_time--;
+        time++;
+
+        if (proc->remaining_time == 0)
+        {
+            proc->finish_time = time;
+            completed++;
         }
     }
     calculate_metrics(state);

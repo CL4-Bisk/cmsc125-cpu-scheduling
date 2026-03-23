@@ -75,6 +75,19 @@ Process *load_processes(const char *filename, int *num_processes)
 	return processes;
 }
 
+void reset_processes(Process *processes, int num_processes) {
+    for (int i = 0; i < num_processes; i++) {
+        processes[i].remaining_time  = processes[i].burst_time;
+        processes[i].start_time      = -1;
+        processes[i].finish_time     = -1;
+        processes[i].waiting_time    = 0;
+        processes[i].turnaround_time = 0;
+        processes[i].response_time   = 0;
+        processes[i].priority        = 0;
+        processes[i].time_in_queue   = 0;
+    }
+}
+
 void print_process(Process proc)
 {
 	printf("Process %s:\n", proc.pid);

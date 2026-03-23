@@ -41,6 +41,6 @@ int schedule_sjf(SchedulerState *state) {
             completed++;
         }
     }
-
+    calculate_metrics(state);
     return 0;
 }

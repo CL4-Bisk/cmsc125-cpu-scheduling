@@ -10,9 +10,6 @@
 
 Process *load_processes(const char *filename, int *num_processes)
 {
-	int max = MAX_LINE;
-
-	snprintf(max, sizeof(max), "../tests/%s", filename);
 
 	FILE *file = fopen(filename, "r");
 	if (file == NULL)
@@ -69,8 +66,6 @@ Process *load_processes(const char *filename, int *num_processes)
 		processes[count].waiting_time = 0;
 		processes[count].priority = 0;
 		processes[count].time_in_queue = 0;
-
-		print_process(processes[count]);
 
 		count++;
 	}

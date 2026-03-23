@@ -49,5 +49,6 @@ int schedule_rr(SchedulerState *state, int quantum)
             }
         }
     }
+    calculate_metrics(state);
     return 0;
 }

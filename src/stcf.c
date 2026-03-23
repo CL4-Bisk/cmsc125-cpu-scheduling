@@ -60,6 +60,6 @@ int schedule_stcf(SchedulerState *state)
             }
         }
     }
-
+    calculate_metrics(state);
     return 0;
 }

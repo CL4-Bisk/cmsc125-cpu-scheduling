@@ -13,7 +13,9 @@ typedef struct {
     int start_time;         // When first executed (for RT)
     int finish_time;        // When completed (for TT)
     int waiting_time;       // Time spent waiting
-
+    int turnaround_time;   
+    int response_time; 
+     
     int priority;           // For MLFQ
     int time_in_queue;      // For MLFQ allotment tracking
 } Process;

@@ -18,18 +18,18 @@ int schedule_stcf(SchedulerState *state)
     int num_processes = state->num_processes;
     char last_pid[16] = "";
 
-    int first_process = state->processes[0].arrival_time;
+    int first_arrival = state->processes[0].arrival_time;
     for (int i = 0; i < num_processes; i++)
     {
-        if (state->processes[i].arrival_time < first_process)
+        if (state->processes[i].arrival_time < first_arrival)
         {
-            first_process = state->processes[i].arrival_time;
+            first_arrival = state->processes[i].arrival_time;
         }
     }
 
-    if (first_process > 0)
+    if (first_arrival > 0)
     {
-        time = first_process; // Start at the arrival time of the first process
+        time = first_arrival; // Start at the arrival time of the first process
     }
 
     while (completed < num_processes)

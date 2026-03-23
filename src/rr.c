@@ -20,14 +20,12 @@ void iq_init(IntQueue *iq, int capacity)
 
 void iq_push(IntQueue *iq, int value)
 {
-    if (iq->size == iq->capacity)
+    if (iq->size < iq->capacity)
     {
-        iq->capacity *= 2;
-        iq->data = realloc(iq->data, iq->capacity * sizeof(int));
+        iq->data[iq->tail] = value;
+        iq->tail = (iq->tail + 1) % iq->capacity;
+        iq->size++;
     }
-    iq->data[iq->tail] = value;
-    iq->tail = (iq->tail + 1) % iq->capacity;
-    iq->size++;
 }
 
 int iq_pop(IntQueue *iq)
@@ -73,11 +71,11 @@ int schedule_rr(SchedulerState *state, int quantum)
         {
             first_arrival = state->processes[i].arrival_time;
         }
+    }
 
-        if (first_arrival > time)
-        {
-            time = first_arrival; // Start at the arrival time of the first process
-        }
+    if (first_arrival > time)
+    {
+        time = first_arrival; // Start at the arrival time of the first process
     }
 
     while (completed < state->num_processes)
@@ -113,6 +111,11 @@ int schedule_rr(SchedulerState *state, int quantum)
         // 5. Get the next process from the ready queue
         int index = iq_pop(&iq);
         Process *proc = &state->processes[index];
+        if (proc->start_time == -1)
+        {
+            proc->start_time = time; // First time the process is executed
+        }
+
         if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
         {
             state->context_switches++; // Increment context switch count if switching to a different process
@@ -124,7 +127,6 @@ int schedule_rr(SchedulerState *state, int quantum)
         int run_time = (proc->remaining_time < quantum) ? proc->remaining_time : quantum;
         proc->remaining_time -= run_time;
         time += run_time;
-        proc->start_time = time - run_time;
 
         // 7. Move time forward by the run time
         for (int i = 0; i < num_processes; i++)
@@ -147,6 +149,7 @@ int schedule_rr(SchedulerState *state, int quantum)
         }
     }
 
+    // Cleanup
     iq_free(&iq);
     free(admitted_processes);
     calculate_metrics(state);

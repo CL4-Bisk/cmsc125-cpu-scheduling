@@ -23,19 +23,23 @@ int schedule_fcfs(SchedulerState *state)
         if (proc->arrival_time > time)
         {
             gantt_add_entry(state, "IDLE", time, proc->arrival_time);
+            log_idle_interval(time, proc->arrival_time);
             time = proc->arrival_time; // Wait for the process to arrive
         }
 
         if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
         {
             state->context_switches++; // Increment context switch count if switching to a different process
+            log_context_switch(time, last_pid, proc->pid);
         }
         strncpy(last_pid, proc->pid, 15);
         last_pid[15] = '\0';
 
+        log_process_start(time, proc->pid);
         proc->start_time = time;
         proc->finish_time = time + proc->burst_time; // Run the process to completion
         gantt_add_entry(state, proc->pid, time, proc->finish_time);
+        log_process_finish(proc->finish_time, proc->pid);
         time += proc->burst_time;                    // Move time forward by the burst time
     }
     calculate_metrics(state);

@@ -2,77 +2,80 @@
  * file: process.c
  * Implementation of process management functions for CPU scheduling simulation.
  */
-
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/process.h"
 
-Process *load_processes(const char *filename, int *num_processes)
+Process *load_processes(const char *filename, const char *processes_input, int *num_processes)
 {
+    int capacity = 4;
+    int count = 0;
+    Process *processes = malloc(capacity * sizeof(Process));
+    if (!processes) return NULL;
 
-	FILE *file = fopen(filename, "r");
-	if (file == NULL)
-	{
-		fprintf(stderr, "Error: Could not open file '%s'\n", filename);
-		return NULL;
-	}
+    // CASE 1: Load from File
+    if (filename != NULL && strlen(filename) > 0) {
+        FILE *file = fopen(filename, "r");
+        if (!file) {
+            free(processes);
+            return NULL;
+        }
+        char line[MAX_LINE];
+        while (fgets(line, MAX_LINE, file)) {
+            if (count >= capacity) {
+                capacity *= 2;
+                processes = realloc(processes, capacity * sizeof(Process));
+            }
+            if (sscanf(line, "%15s %d %d", processes[count].pid, 
+                       &processes[count].arrival_time, 
+                       &processes[count].burst_time) == 3) {
+                processes[count].remaining_time = processes[count].burst_time;
+                processes[count].start_time = -1;
+                count++;
+            }
+        }
+        fclose(file);
+    } 
+    // CASE 2: Load from String (A:0:240,B:10:180)
+    else if (processes_input != NULL && strlen(processes_input) > 0) {
+        char *input_copy = strdup(processes_input);
+        char *saveptr1, *saveptr2;
+        char *token = strtok_r(input_copy, ",", &saveptr1);
+        
+        while (token != NULL) {
+            if (count >= capacity) {
+                capacity *= 2;
+                processes = realloc(processes, capacity * sizeof(Process));
+            }
 
-	int starting_capacity = 4;
-	int count = 0;
+            char *p_id = strtok_r(token, ":", &saveptr2);
+            char *p_at = strtok_r(NULL, ":", &saveptr2);
+            char *p_bt = strtok_r(NULL, ":", &saveptr2);
 
-	Process *processes = malloc(starting_capacity * sizeof(Process));
-	if (processes == NULL)
-	{
-		fprintf(stderr, "Error: Memory allocation failed\n");
-		fclose(file);
-		return NULL;
-	}
+            if (p_id && p_at && p_bt) {
+                // Correct way to copy to the PID array
+                strncpy(processes[count].pid, p_id, 15);
+                processes[count].pid[15] = '\0'; 
+                
+                processes[count].arrival_time = atoi(p_at);
+                processes[count].burst_time = atoi(p_bt);
+                processes[count].remaining_time = processes[count].burst_time;
+                processes[count].start_time = -1;
+                processes[count].finish_time = -1;
+                processes[count].waiting_time = 0;
+                processes[count].priority = 0;
+                processes[count].time_in_queue = 0;
+                count++;
+            }
+            token = strtok_r(NULL, ",", &saveptr1);
+        }
+        free(input_copy);
+    }
 
-	char line[MAX_LINE];
-
-	while (fgets(line, MAX_LINE, file) != NULL)
-	{
-		char pid[16];
-		int at, bt;
-
-		if (sscanf(line, "%15s %d %d", pid, &at, &bt) != 3)
-		{
-			fprintf(stderr, "Warning: Skipping malformed line: %s", line);
-			continue;
-		}
-
-		if (count == starting_capacity)
-		{
-			starting_capacity *= 2;
-			Process *temp = realloc(processes, starting_capacity * sizeof(Process));
-			if (temp == NULL)
-			{
-				fprintf(stderr, "Error: Memory reallocation failed\n");
-				free(processes);
-				fclose(file);
-				return NULL;
-			}
-			processes = temp;
-		}
-
-		strncpy(processes[count].pid, pid, sizeof(processes[count].pid) - 1);
-		processes[count].pid[15] = '\0';
-		processes[count].arrival_time = at;
-		processes[count].burst_time = bt;
-		processes[count].remaining_time = bt;
-		processes[count].start_time = -1;
-		processes[count].finish_time = -1;
-		processes[count].waiting_time = 0;
-		processes[count].priority = 0;
-		processes[count].time_in_queue = 0;
-
-		count++;
-	}
-
-	fclose(file);
-	*num_processes = count;
-	return processes;
+    *num_processes = count;
+    return processes;
 }
 
 void reset_processes(Process *processes, int num_processes) {

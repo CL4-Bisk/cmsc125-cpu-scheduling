@@ -20,7 +20,7 @@ typedef struct {
     int time_in_queue;      // For MLFQ allotment tracking
 } Process;
 
-Process *load_processes(const char *filename, int *num_processes);
+Process *load_processes(const char *filename, const char *processes_input, int *num_processes);
 void reset_processes(Process *processes, int num_processes);
 void sort_processes(Process *processes, int num_processes);
 void print_process(Process process);

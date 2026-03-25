@@ -125,8 +125,10 @@ int schedule_rr(SchedulerState *state, int quantum)
 
         // 6. Run the process for the time quantum or until completion
         int run_time = (proc->remaining_time < quantum) ? proc->remaining_time : quantum;
+        int run_start = time;
         proc->remaining_time -= run_time;
         time += run_time;
+        gantt_add_or_extend(state, proc->pid, run_start, time);
 
         // 7. Move time forward by the run time
         for (int i = 0; i < num_processes; i++)
@@ -153,5 +155,6 @@ int schedule_rr(SchedulerState *state, int quantum)
     iq_free(&iq);
     free(admitted_processes);
     calculate_metrics(state);
+    gantt_print(state);
     return 0;
 }

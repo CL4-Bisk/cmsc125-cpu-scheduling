@@ -73,6 +73,12 @@ typedef struct
     int context_switches; // Total number of context switches
 } SchedulerState;
 
+// Logging helper APIs
+void log_process_start(int time, const char *pid);
+void log_process_finish(int time, const char *pid);
+void log_context_switch(int time, const char *from_pid, const char *to_pid);
+void log_idle_interval(int start_time, int end_time);
+
 // Return 0 on success, -1 on error (command line etiquette)
 int schedule_fcfs(SchedulerState *state);
 int schedule_sjf(SchedulerState *state);

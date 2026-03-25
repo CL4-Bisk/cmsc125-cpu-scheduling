@@ -131,12 +131,14 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
 
         if (proc->start_time == -1)
         {
+            log_process_start(time, proc->pid);
             proc->start_time = time; // First time the process is executed
         }
 
         if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
         {
             state->context_switches++; // Increment context switch count if switching to a different process
+            log_context_switch(time, last_pid, proc->pid);
         }
         strncpy(last_pid, proc->pid, 15);
         last_pid[15] = '\0';
@@ -182,6 +184,7 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
         if (proc->remaining_time == 0)
         {
             proc->finish_time = time;
+            log_process_finish(time, proc->pid);
             completed++;
         }
         else

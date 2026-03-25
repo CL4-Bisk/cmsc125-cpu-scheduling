@@ -68,14 +68,17 @@ int schedule_sjf(SchedulerState *state)
             if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
             {
                 state->context_switches++; // Increment context switch count if switching to a different process
+                log_context_switch(time, last_pid, proc->pid);
             }
             strncpy(last_pid, proc->pid, 15);
             last_pid[15] = '\0';
 
+            log_process_start(time, proc->pid);
             proc->start_time = time;
             time += proc->remaining_time;
             proc->finish_time = time;
             gantt_add_entry(state, proc->pid, proc->start_time, proc->finish_time);
+            log_process_finish(proc->finish_time, proc->pid);
             proc->remaining_time = 0;
             completed++;
         }

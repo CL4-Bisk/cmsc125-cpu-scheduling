@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     char algorithm[16] = "";
     char input_file[256]  = "";
     char processes_str[1024] = "";
+    int  quantum = DEFAULT_QUANTUM;
 
     for (int i = 1; i < argc; i++) {
         if (strncmp(argv[i], "--algorithm=", 12) == 0) {
@@ -23,6 +24,12 @@ int main(int argc, char *argv[])
             strncpy(input_file, argv[i] + 8, sizeof(input_file) - 1);
         } else if (strncmp(argv[i], "--processes=", 12) == 0) {
             strncpy(processes_str, argv[i] + 12, sizeof(processes_str) - 1);
+        } else if (strncmp(argv[i], "--quantum=", 10) == 0) {
+            quantum = atoi(argv[i] + 10);
+            if (quantum <= 0) {
+                fprintf(stderr, "Error: Quantum must be a positive integer.\n");
+                return 1;
+            }
         }
     }
         
@@ -56,8 +63,8 @@ int main(int argc, char *argv[])
         schedule_stcf(&state);
 
     } else if (strcmp(algorithm, "RR") == 0) {
-        printf("Running Round Robin Scheduler (quantum=%d)...\n", DEFAULT_QUANTUM);
-        schedule_rr(&state, DEFAULT_QUANTUM);
+        printf("Running Round Robin Scheduler (quantum=%d)...\n", quantum);
+        schedule_rr(&state, quantum);
 
     } else if (strcmp(algorithm, "MLFQ") == 0) {
         MLFQQueue mlfq_queues[3] = {

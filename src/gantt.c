@@ -61,8 +61,10 @@
         printf("|");
         for (GanttEntry *entry = state->gantt_head; entry != NULL; entry = entry->next) {
             int duration = entry->end_time - entry->start_time;
-            int width    = (duration + scale - 1) / scale;  
-            if (width < 1) width = 1;
+            int width = (duration + scale - 1) / scale;
+            if (width < (int)strlen(entry->pid) + 2) {
+                width = strlen(entry->pid) + 2;
+            }
 
             int llen = strlen(entry->pid);
 
@@ -98,9 +100,10 @@
         for (GanttEntry *entry = state->gantt_head; entry != NULL; entry = entry->next) {
             int duration = entry->end_time - entry->start_time;
             int width    = (duration + scale - 1) / scale;
-            if (width < 1) width = 1;
-            col += width + 1; 
-            cols[idx]  = col - 1; 
+            if (width < (int)strlen(entry->pid) + 2)   // same minimum as top row
+                width = strlen(entry->pid) + 2;
+            col += width + 1;
+            cols[idx]  = col - 1;
             times[idx] = entry->end_time;
             idx++;
         }

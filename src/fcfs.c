@@ -22,6 +22,7 @@ int schedule_fcfs(SchedulerState *state)
         Process *proc = &state->processes[i];
         if (proc->arrival_time > time)
         {
+            gantt_add_entry(state, "IDLE", time, proc->arrival_time);
             time = proc->arrival_time; // Wait for the process to arrive
         }
 
@@ -34,9 +35,11 @@ int schedule_fcfs(SchedulerState *state)
 
         proc->start_time = time;
         proc->finish_time = time + proc->burst_time; // Run the process to completion
+        gantt_add_entry(state, proc->pid, time, proc->finish_time);
         time += proc->burst_time;                    // Move time forward by the burst time
     }
     calculate_metrics(state);
+    gantt_print(state);
 
     // Convoy effect
     for (int i = 0; i < state->num_processes; i++)

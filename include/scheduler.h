@@ -22,13 +22,21 @@ typedef struct
     int last_boost;    // Last boost time
 } MLFQScheduler;
 
-typedef enum
-{
-    EVENT_ARRIVAL,
-    EVENT_COMPLETION,
-    EVENT_QUANTUM_EXPIRE,
-    EVENT_PRIORITY_BOOST
-} EventType;
+// typedef enum
+// {
+//     EVENT_ARRIVAL,
+//     EVENT_COMPLETION,
+//     EVENT_QUANTUM_EXPIRE,
+//     EVENT_PRIORITY_BOOST
+// } EventType;
+
+// typedef struct Event
+// {
+//     int time;
+//     EventType type;
+//     Process *process;
+//     struct Event *next;
+// } Event;
 
 typedef struct
 {
@@ -46,13 +54,6 @@ typedef struct
     int capacity;
 } IntQueue;
 
-typedef struct Event
-{
-    int time;
-    EventType type;
-    Process *process;
-    struct Event *next;
-} Event;
 
 typedef struct GanttEntry
 {
@@ -67,7 +68,6 @@ typedef struct
     Process *processes; // Array of all processes
     int num_processes;  // Number of processes
     int current_time;   // Current simulation time
-    // ... additional fields for metrics, Gantt chart, etc.
     GanttEntry *gantt_head;
     GanttEntry *gantt_tail;
     int context_switches; // Total number of context switches

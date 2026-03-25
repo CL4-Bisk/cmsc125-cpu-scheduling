@@ -32,8 +32,7 @@ void gantt_add_entry(SchedulerState *state, const char *pid, int start, int end)
 
 void gantt_add_or_extend(SchedulerState *state, const char *pid, int start, int end)
 {
-    if (state->gantt_tail != NULL &&
-        strcmp(state->gantt_tail->pid, pid) == 0)
+    if (state->gantt_tail != NULL && strcmp(state->gantt_tail->pid, pid) == 0)
     {
         state->gantt_tail->end_time = end;
         return;

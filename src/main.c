@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "Error: Quantum must be a positive integer.\n");
                 return 1;
             }
+        } else {
+            fprintf(stderr, "Unknown/Missing argument(s): %s\n", argv[i]);
+            return 1;
         }
     }
         
@@ -47,7 +50,10 @@ int main(int argc, char *argv[])
     SchedulerState state = {
         .processes = processes,
         .num_processes = num_processes,
-        .current_time  = 0
+        .current_time  = 0,
+        .context_switches = 0,
+        .gantt_head      = NULL,
+        .gantt_tail      = NULL
     };
 
     if (strcmp(algorithm, "FCFS") == 0) {

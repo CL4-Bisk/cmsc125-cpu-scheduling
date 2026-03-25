@@ -68,7 +68,8 @@ typedef struct
     int num_processes;  // Number of processes
     int current_time;   // Current simulation time
     // ... additional fields for metrics, Gantt chart, etc.
-    // Recall: CMSC 141
+    GanttEntry *gantt_head;
+    GanttEntry *gantt_tail;
     int context_switches; // Total number of context switches
 } SchedulerState;
 

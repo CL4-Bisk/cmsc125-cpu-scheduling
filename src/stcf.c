@@ -66,7 +66,7 @@
 
                 if (next_process != -1)
                 {
-                    gantt_add_or_extend(state, "IDLE", time, state->processes[next_process].arrival_time);
+                    gantt_extend(state, "IDLE", time, state->processes[next_process].arrival_time);
                     time = state->processes[next_process].arrival_time; // Move time forward to the next process arrival
                 }
                 else
@@ -92,7 +92,7 @@
             last_pid[15] = '\0';
 
             proc->remaining_time--;
-            gantt_add_or_extend(state, proc->pid, time, time + 1);
+            gantt_extend(state, proc->pid, time, time + 1);
             time++;
 
             if (proc->remaining_time == 0)

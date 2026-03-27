@@ -178,7 +178,7 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
         proc->time_in_queue += run_time;
         int run_start = time;
         time += run_time;
-        gantt_add_or_extend(state, proc->pid, run_start, time);
+        gantt_extend(state, proc->pid, run_start, time);
 
         // 5. Check if the process has finished
         if (proc->remaining_time == 0)

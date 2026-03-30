@@ -22,21 +22,21 @@ typedef struct
     int last_boost;    // Last boost time
 } MLFQScheduler;
 
-// typedef enum
-// {
-//     EVENT_ARRIVAL,
-//     EVENT_COMPLETION,
-//     EVENT_QUANTUM_EXPIRE,
-//     EVENT_PRIORITY_BOOST
-// } EventType;
+typedef enum
+{
+    EVENT_ARRIVAL,
+    EVENT_COMPLETION,
+    EVENT_QUANTUM_EXPIRE,
+    EVENT_PRIORITY_BOOST
+} EventType;
 
-// typedef struct Event
-// {
-//     int time;
-//     EventType type;
-//     Process *process;
-//     struct Event *next;
-// } Event;
+typedef struct Event
+{
+    int time;
+    EventType type;
+    Process *process;
+    struct Event *next;
+} Event;
 
 typedef struct
 {
@@ -47,13 +47,12 @@ typedef struct
 
 typedef struct
 {
-    int *data;          // Placeholder for any additional data needed by schedulers
+    int *data; // Placeholder for any additional data needed by schedulers
     int head;
     int tail;
     int size;
     int capacity;
 } IntQueue;
-
 
 typedef struct GanttEntry
 {

@@ -16,7 +16,7 @@ void log_process_start(int time, const char *pid)
 void log_process_finish(int time, const char *pid)
 {
     if (pid == NULL)
-        pid = "UNKNOWN";
+        pid = "UNKNOWN"; 
     printf("[%04d] FINISH %s\n", time, pid);
 }
 

@@ -40,7 +40,7 @@ int schedule_fcfs(SchedulerState *state)
         proc->finish_time = time + proc->burst_time; // Run the process to completion
         gantt_add_entry(state, proc->pid, time, proc->finish_time);
         log_process_finish(proc->finish_time, proc->pid);
-        time += proc->burst_time;                    // Move time forward by the burst time
+        time += proc->burst_time; // Move time forward by the burst time
     }
     calculate_metrics(state);
     gantt_print(state);

@@ -40,7 +40,7 @@ int schedule_sjf(SchedulerState *state)
             int next_arrival = -1;
             for (int i = 0; i < num_processes; i++)
             {
-                if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time > time)  // hasn't arrived yet
+                if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time > time) // hasn't arrived yet
                 {
                     if (next_arrival == -1 || state->processes[i].arrival_time < next_arrival)
                     {
@@ -52,12 +52,11 @@ int schedule_sjf(SchedulerState *state)
             if (next_arrival != -1)
             {
                 gantt_add_entry(state, "IDLE", time, next_arrival);
-                time = next_arrival;  // jump to next arrival
+                time = next_arrival; // jump to next arrival
             }
             else
             {
-                
-                break;  // no more processes
+                break; // no more processes
             }
             continue;
         }

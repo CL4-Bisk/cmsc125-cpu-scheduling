@@ -1,0 +1,8 @@
+# MLFQ Configuration File
+# Format: num_queues boost_period
+# Followed by: level time_quantum allotment (one per line)
+
+3 200
+0 10 50
+1 30 150
+2 -1 -1

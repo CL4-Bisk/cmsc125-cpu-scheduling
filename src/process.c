@@ -15,7 +15,7 @@ Process *load_processes(const char *filename, const char *processes_input, int *
     Process *processes = malloc(capacity * sizeof(Process));
     if (!processes) return NULL;
 
-    // CASE 1: Load from File
+    // CASE 1: Load from File, this is one is priority regardless if there's process or not
     if (filename != NULL && strlen(filename) > 0) {
         FILE *file = fopen(filename, "r");
         if (!file) {

@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "Error: Quantum must be a positive integer.\n");
                 return 1;
             }
+        } else if (strncmp(argv[i], "--comparison=", 14) == 0) {
+            strncpy(processes_str, argv[i] + 12, sizeof(processes_str) - 1);
         } else {
             fprintf(stderr, "Unknown/Missing argument(s): %s\n", argv[i]);
             return 1;
@@ -93,6 +95,7 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Valid options: FCFS, SJF, STCF, RR, MLFQ\n");
         return 1;
     }
+    gantt_free(&state);
     reset_processes(processes, num_processes);
     free(processes);
     return 0;

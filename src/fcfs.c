@@ -44,7 +44,7 @@ int schedule_fcfs(SchedulerState *state)
     }
     calculate_metrics(state);
     gantt_print(state);
-
+    print_logs();
     // Convoy effect
     for (int i = 0; i < state->num_processes; i++)
     {

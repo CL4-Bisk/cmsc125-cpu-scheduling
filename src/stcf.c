@@ -64,17 +64,17 @@ int schedule_stcf(SchedulerState *state)
                 }
             }
 
-            if (next_process != -1)
-            {
-                gantt_add_or_extend(state, "IDLE", time, state->processes[next_process].arrival_time);
-                time = state->processes[next_process].arrival_time; // Move time forward to the next process arrival
+                if (next_process != -1)
+                {
+                    gantt_extend(state, "IDLE", time, state->processes[next_process].arrival_time);
+                    time = state->processes[next_process].arrival_time; // Move time forward to the next process arrival
+                }
+                else
+                {
+                    break; // No more processes to run
+                }
+                continue; // No process ready, move time forward to the next arrival time
             }
-            else
-            {
-                break; // No more processes to run
-            }
-            continue; // No process ready, move time forward to the next arrival time
-        }
 
         Process *proc = &state->processes[shortest_remaining_time_index];
         if (proc->start_time == -1)
@@ -91,9 +91,9 @@ int schedule_stcf(SchedulerState *state)
         strncpy(last_pid, proc->pid, 15);
         last_pid[15] = '\0';
 
-        proc->remaining_time--;
-        gantt_add_or_extend(state, proc->pid, time, time + 1);
-        time++;
+            proc->remaining_time--;
+            gantt_extend(state, proc->pid, time, time + 1);
+            time++;
 
         if (proc->remaining_time == 0)
         {

@@ -130,7 +130,7 @@ int schedule_rr(SchedulerState *state, int quantum)
         int run_start = time;
         proc->remaining_time -= run_time;
         time += run_time;
-        gantt_add_or_extend(state, proc->pid, run_start, time);
+        gantt_extend(state, proc->pid, run_start, time);
 
         // 7. Move time forward by the run time
         for (int i = 0; i < num_processes; i++)
@@ -161,3 +161,5 @@ int schedule_rr(SchedulerState *state, int quantum)
     gantt_print(state);
     return 0;
 }
+
+// Add Quatum isolated round robin

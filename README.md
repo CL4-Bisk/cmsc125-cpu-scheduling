@@ -16,12 +16,13 @@ Created as a laboratory assignment for CMSC 125 Operating Systems.
 # Features and Algorithms
 
 **`cpu-scheduling`** offers certain features, which follows as:
+
 - **Five Scheduling Algorithms:**
-  1. FCFS — First Come First Served 
-  2. SJF — Shortest Job First 
-  3. STCF — Shortest Time to Completion First 
-  4. RR — Round Robin 
-  5. MLFQ — Multi-Level Feedback Queue 
+  1. FCFS — First Come First Served
+  2. SJF — Shortest Job First
+  3. STCF — Shortest Time to Completion First
+  4. RR — Round Robin
+  5. MLFQ — Multi-Level Feedback Queue
 
 - **Performance Metrics per Algorithm:**
   1. Finish Time (FT)
@@ -37,7 +38,6 @@ Created as a laboratory assignment for CMSC 125 Operating Systems.
 - **Context switch tracking** for all Algorithms
 
 - **Flexible input** — Load workloads from a file or inline via command line
-
 
 # Compilation and Usage
 
@@ -175,44 +175,51 @@ make clean
 ```
 
 ### V. Running the Program with In-line Arguments
+
 1. In the wsl terminal you can run the program using, although it will cause an error for lacking arguments:
+
 ```bash
-./schedsim 
+./schedsim
 ```
 
 2. Certain arguments must be present while some are optional, e.g.:
-    - `--algorithm=FCFS` (Must be present)
-        - The algorithm you will use (FCFS, SJF, STCF, RR, MLFQ).
-    - `--input=tests/workload1.txt` (Atleast one between Input or Processes must be present)
-        - Location of the file to be read, it must follow the format (Name AT BT).
-        - e.g. A 0 240
-    - `--processes="A:0:240,B:10:180,C:20:150"` (Atleast one between Input or Processes must be present)
-        - Command Line argument implementation that must follow the format ("Name:AT:BT, ..., Name:AT:BT")
-        - e.g. "A:0:240,B:10:180,C:20:150"
-    - `--quantum=20` (Optional)
-        - For algorithms that uses quantum time (default: 30)
+   - `--algorithm=FCFS` (Must be present)
+     - The algorithm you will use (FCFS, SJF, STCF, RR, MLFQ).
+   - `--input=tests/workload1.txt` (Atleast one between Input or Processes must be present)
+     - Location of the file to be read, it must follow the format (Name AT BT).
+     - e.g. A 0 240
+   - `--processes="A:0:240,B:10:180,C:20:150"` (Atleast one between Input or Processes must be present)
+     - Command Line argument implementation that must follow the format ("Name:AT:BT, ..., Name:AT:BT")
+     - e.g. "A:0:240,B:10:180,C:20:150"
+   - `--quantum=20` (Optional)
+     - For algorithms that uses quantum time (default: 30)
 
 3. Now in the wsl terminal you can run the programing using and enjoy:
+
 ```bash
 ./schedsim --algorithm=RR --input=tests/workload1.txt --quantum=15
 ```
 
 # Example Test Usage
+
 ```bash
-./schedsim --algorithm=FCFS --input=tests/workload1.txt
+make ${name_of_scheduler}_input-${input_number}
+
+ex. make fcfs_input-1
 ```
+
 ```
 Running FCFS Scheduler...
 
 === Metrics ===
 
-Process    | AT    | BT    | FT    | TT    | WT    | RT   
+Process    | AT    | BT    | FT    | TT    | WT    | RT
 -----------|-------|-------|-------|-------|-------|------
-A          | 0     | 240   | 240   | 240   | 0     | 0    
-B          | 10    | 180   | 420   | 410   | 230   | 230  
-C          | 20    | 150   | 570   | 550   | 400   | 400  
-D          | 25    | 80    | 650   | 625   | 545   | 545  
-E          | 30    | 130   | 780   | 750   | 620   | 620  
+A          | 0     | 240   | 240   | 240   | 0     | 0
+B          | 10    | 180   | 420   | 410   | 230   | 230
+C          | 20    | 150   | 570   | 550   | 400   | 400
+D          | 25    | 80    | 650   | 625   | 545   | 545
+E          | 30    | 130   | 780   | 750   | 620   | 620
 -----------|-------|-------|-------|-------|-------|------
 Average    |       |       |       | 515.0 | 359.0 | 359.0
 
@@ -241,21 +248,23 @@ Warning: Process C is experiencing the convoy effect (waiting time: 400)
 Warning: Process D is experiencing the convoy effect (waiting time: 545)
 Warning: Process E is experiencing the convoy effect (waiting time: 620)
 ```
+
 # Limitations and Bugs
 
 ### 1. Hardcoded MLFQ Config
+
 - Queue parameters (quantum, allotment, boost period) are currently set in `main.c` and cannot be loaded from a config file via `--mlfq-config`.
 
-
 ### 2. `--compare` Mode not Implemented
+
 - Running all algorithms in a single comparison table with averages values is not yet implemented.
 
+### 3. Fixed Process limit
 
-### 3.  Fixed Process limit
 - Maximum of 100 processes per workload file as defined by `MAX_PROCESSES`.
 
-
 ### 4. Gantt Chart Scaling
+
 - Very short process segments may appear compressed or merged at high scale factors.
 
 # License

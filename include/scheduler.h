@@ -2,6 +2,7 @@
 #define SCHEDULER_H
 
 #include "process.h"
+#include "gantt.h"
 
 #define DEFAULT_QUANTUM 30
 
@@ -54,15 +55,7 @@ typedef struct
     int capacity;
 } IntQueue;
 
-typedef struct GanttEntry
-{
-    char pid[16];            // Process identifier
-    int start_time;          // When first executed
-    int end_time;            // When completed
-    struct GanttEntry *next; // Array or linked list of Gantt entries
-} GanttEntry;
-
-typedef struct
+typedef struct SchedulerState
 {
     Process *processes; // Array of all processes
     int num_processes;  // Number of processes
@@ -72,11 +65,18 @@ typedef struct
     int context_switches; // Total number of context switches
 } SchedulerState;
 
+typedef struct
+{
+    const char *name;
+    int (*run)(SchedulerState *state, int quantum);
+} SchedulerEntry;
+
 // Logging helper APIs
 void log_process_start(int time, const char *pid);
 void log_process_finish(int time, const char *pid);
 void log_context_switch(int time, const char *from_pid, const char *to_pid);
 void log_idle_interval(int start_time, int end_time);
+void print_logs(void);
 
 // Return 0 on success, -1 on error (command line etiquette)
 int schedule_fcfs(SchedulerState *state);
@@ -84,5 +84,8 @@ int schedule_sjf(SchedulerState *state);
 int schedule_stcf(SchedulerState *state);
 int schedule_rr(SchedulerState *state, int quantum);
 int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config);
+
+// scheduler.h — add alongside the other declarations
+int run_scheduler(SchedulerState *state, const char *algorithm, int quantum);
 
 #endif

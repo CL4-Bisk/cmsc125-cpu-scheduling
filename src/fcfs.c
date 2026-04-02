@@ -8,45 +8,37 @@
 #include "../include/scheduler.h"
 #include "../include/gantt.h"
 #include "../include/metrics.h"
+#include "../include/sched_utils.h"
 
 int schedule_fcfs(SchedulerState *state)
 {
     // Implementation for FCFS scheduling
     sort_processes(state->processes, state->num_processes);
 
-    int time = 0;
-    char last_pid[16] = "";
+    SchedulerContext ctx;
+    ctx_init(&ctx, state);
 
-    for (int i = 0; i < state->num_processes; i++)
+    for (int i = 0; i < ctx.num_processes; i++)
     {
         Process *proc = &state->processes[i];
-        if (proc->arrival_time > time)
+        if (proc->arrival_time > ctx.time)
         {
-            gantt_add_entry(state, "IDLE", time, proc->arrival_time);
-            log_idle_interval(time, proc->arrival_time);
-            time = proc->arrival_time; // Wait for the process to arrive
+            ctx_handle_idle(state, &ctx, proc->arrival_time);
         }
 
-        if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
-        {
-            state->context_switches++; // Increment context switch count if switching to a different process
-            log_context_switch(time, last_pid, proc->pid);
-        }
-        strncpy(last_pid, proc->pid, 15);
-        last_pid[15] = '\0';
+        ctx_track_switch(state, &ctx, proc->pid);
 
-        log_process_start(time, proc->pid);
-        proc->start_time = time;
-        proc->finish_time = time + proc->burst_time; // Run the process to completion
-        gantt_add_entry(state, proc->pid, time, proc->finish_time);
+        log_process_start(ctx.time, proc->pid);
+        proc->start_time = ctx.time;
+        proc->finish_time = ctx.time + proc->burst_time; // Run the process to completion
+        gantt_add_entry(state, proc->pid, ctx.time, proc->finish_time);
         log_process_finish(proc->finish_time, proc->pid);
-        time += proc->burst_time; // Move time forward by the burst time
+        ctx.time += proc->burst_time; // Move time forward by the burst time
     }
-    calculate_metrics(state);
-    gantt_print(state);
+    finish_scheduler(state);
     print_logs();
     // Convoy effect
-    for (int i = 0; i < state->num_processes; i++)
+    for (int i = 0; i < ctx.num_processes; i++)
     {
         Process *proc = &state->processes[i];
         if (proc->waiting_time > 2 * proc->burst_time)

@@ -40,15 +40,17 @@ int main(int argc, char *argv[])
                 return 1;
             }
         }
-        else if (strncmp(argv[i], "--comparison=", 14) == 0)
-        {
-            strncpy(processes_str, argv[i] + 12, sizeof(processes_str) - 1);
-        }
         else
         {
-            fprintf(stderr, "Unknown/Missing argument(s): %s\n", argv[i]);
+            fprintf(stderr, "Unknown argument: %s\n", argv[i]);
             return 1;
         }
+    }
+
+    if (strlen(algorithm) == 0)
+    {
+        fprintf(stderr, "Error: No algorithm specified. Use --algorithm=<name>.\n");
+        return 1;
     }
 
     if (strlen(input_file) == 0 && strlen(processes_str) == 0)
@@ -72,49 +74,10 @@ int main(int argc, char *argv[])
         .gantt_head = NULL,
         .gantt_tail = NULL};
 
-    if (strcmp(algorithm, "FCFS") == 0)
-    {
-        printf("Running FCFS Scheduler...\n");
-        schedule_fcfs(&state);
-    }
-    else if (strcmp(algorithm, "SJF") == 0)
-    {
-        printf("Running SJF Scheduler...\n");
-        schedule_sjf(&state);
-    }
-    else if (strcmp(algorithm, "STCF") == 0)
-    {
-        printf("Running STCF Scheduler...\n");
-        schedule_stcf(&state);
-    }
-    else if (strcmp(algorithm, "RR") == 0)
-    {
-        printf("Running Round Robin Scheduler (quantum=%d)...\n", quantum);
-        schedule_rr(&state, quantum);
-    }
-    else if (strcmp(algorithm, "MLFQ") == 0)
-    {
-        MLFQQueue mlfq_queues[3] = {
-            {.level = 0, .time_quantum = 10, .allotment = 50, .queue = NULL, .size = 0},
-            {.level = 1, .time_quantum = 30, .allotment = 150, .queue = NULL, .size = 0},
-            {.level = 2, .time_quantum = -1, .allotment = -1, .queue = NULL, .size = 0}};
+    int result = run_scheduler(&state, algorithm, quantum);
 
-        MLFQScheduler mlfq = {
-            .queues = mlfq_queues,
-            .num_queues = 3,
-            .boost_period = 200,
-            .last_boost = 0};
-        printf("Running MLFQ Scheduler...\n");
-        schedule_mlfq(&state, &mlfq);
-    }
-    else
-    {
-        fprintf(stderr, "Error: Unknown algorithm '%s'\n", algorithm);
-        fprintf(stderr, "Valid options: FCFS, SJF, STCF, RR, MLFQ\n");
-        return 1;
-    }
     gantt_free(&state);
     reset_processes(processes, num_processes);
     free(processes);
-    return 0;
+    return result == 0 ? 0 : 1;
 }

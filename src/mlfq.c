@@ -2,76 +2,36 @@
  * file: mlfq.c
  * Multi-level feedback queue scheduling
  */
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "../include/gantt.h"
 #include "../include/scheduler.h"
 #include "../include/metrics.h"
-
-void pq_init(ProcessQueue *pq, int capacity)
-{
-    pq->processes = malloc(capacity * sizeof(Process *));
-    pq->size = 0;
-    pq->capacity = capacity;
-}
-
-void pq_push(ProcessQueue *pq, Process *process)
-{
-    if (pq->size == pq->capacity)
-    {
-        pq->capacity *= 2;
-        pq->processes = realloc(pq->processes, pq->capacity * sizeof(Process *));
-    }
-    pq->processes[pq->size++] = process;
-}
-
-Process *pq_pop(ProcessQueue *pq)
-{
-    if (pq->size > 0)
-    {
-        Process *proc = pq->processes[0];
-        memmove(pq->processes, pq->processes + 1, (pq->size - 1) * sizeof(Process *));
-        pq->size--;
-        return proc;
-    }
-    return NULL;
-}
-
-void pq_free(ProcessQueue *pq)
-{
-    free(pq->processes);
-    pq->processes = NULL;
-    pq->size = 0;
-    pq->capacity = 0;
-}
+#include "../include/sched_utils.h"
 
 int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
 {
     // Implementation for MLFQ scheduling
-    int time = 0;
-    int completed = 0;
-    int num_processes = state->num_processes;
+    SchedulerContext ctx;
+    ctx_init(&ctx, state);
     int num_queues = mlfq_config->num_queues;
-    char last_pid[16] = "";
 
     // Initialize queues
     ProcessQueue *queues = malloc(num_queues * sizeof(ProcessQueue));
     for (int i = 0; i < num_queues; i++)
     {
-        pq_init(&queues[i], num_processes + 1);
+        pq_init(&queues[i], ctx.num_processes + 1);
     }
 
-    int *admitted_processes = calloc(num_processes, sizeof(int)); // Track admitted processes
+    int *admitted_processes = calloc(ctx.num_processes, sizeof(int)); // Track admitted processes
     mlfq_config->last_boost = 0;
 
-    while (completed < num_processes)
+    while (ctx.completed < ctx.num_processes)
     {
 
         // 1. Admit new processes to the highest priority queue
-        for (int i = 0; i < num_processes; i++)
+        for (int i = 0; i < ctx.num_processes; i++)
         {
-            if (!admitted_processes[i] && state->processes[i].arrival_time <= time)
+            if (!admitted_processes[i] && state->processes[i].arrival_time <= ctx.time)
             {
                 Process *proc = &state->processes[i];
                 proc->priority = 0; // Start at highest priority
@@ -81,7 +41,7 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
         }
 
         // 2. Check for priority boost
-        if (mlfq_config->boost_period > 0 && time - mlfq_config->last_boost >= mlfq_config->boost_period)
+        if (mlfq_config->boost_period > 0 && ctx.time - mlfq_config->last_boost >= mlfq_config->boost_period)
         {
             for (int i = 1; i < num_queues; i++)
             {
@@ -93,7 +53,7 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
                     pq_push(&queues[0], proc);
                 }
             }
-            mlfq_config->last_boost = time;
+            mlfq_config->last_boost = ctx.time;
         }
 
         // 3. Find the highest priority non-empty queue
@@ -109,21 +69,14 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
 
         if (queue_index == -1)
         {
-            int next_arrival = -1;
-            for (int i = 0; i < num_processes; i++)
-            {
-                if (!admitted_processes[i] && (next_arrival == -1 || state->processes[i].arrival_time < next_arrival))
-                {
-                    next_arrival = state->processes[i].arrival_time;
-                }
-            }
+            int next_arrival = ctx_next_arrival(state, &ctx, admitted_processes);
             if (next_arrival == -1)
             {
                 break; // No more processes to admit
             }
 
-            time = next_arrival; // Move time forward to next arrival
-            continue;            // No processes ready, move time forward to next arrival
+            ctx.time = next_arrival; // Move time forward to next arrival
+            continue;                // No processes ready, move time forward to next arrival
         }
 
         MLFQQueue *mq = &mlfq_config->queues[queue_index];
@@ -131,17 +84,11 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
 
         if (proc->start_time == -1)
         {
-            log_process_start(time, proc->pid);
-            proc->start_time = time; // First time the process is executed
+            log_process_start(ctx.time, proc->pid);
+            proc->start_time = ctx.time; // First time the process is executed
         }
 
-        if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
-        {
-            state->context_switches++; // Increment context switch count if switching to a different process
-            log_context_switch(time, last_pid, proc->pid);
-        }
-        strncpy(last_pid, proc->pid, 15);
-        last_pid[15] = '\0';
+        ctx_track_switch(state, &ctx, proc->pid);
 
         // 4. Run the process for the appropriate time slice
         int time_slice = (mq->time_quantum > 0) ? mq->time_quantum : proc->remaining_time;
@@ -153,11 +100,11 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
             run_time = proc->remaining_time;
         }
 
-        int check_time = time + run_time;
-        for (int i = 0; i < num_processes; i++)
+        int check_time = ctx.time + run_time;
+        for (int i = 0; i < ctx.num_processes; i++)
         {
             if (!admitted_processes[i] &&
-                state->processes[i].arrival_time > time &&
+                state->processes[i].arrival_time > ctx.time &&
                 state->processes[i].arrival_time <= check_time)
             {
                 check_time = state->processes[i].arrival_time;
@@ -167,25 +114,25 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
         if (mlfq_config->boost_period > 0)
         {
             int next_boost_time = mlfq_config->last_boost + mlfq_config->boost_period;
-            if (next_boost_time > time && next_boost_time < check_time)
+            if (next_boost_time > ctx.time && next_boost_time < check_time)
             {
                 check_time = next_boost_time;
             }
         }
 
-        run_time = check_time - time;
+        run_time = check_time - ctx.time;
         proc->remaining_time -= run_time;
         proc->time_in_queue += run_time;
-        int run_start = time;
-        time += run_time;
-        gantt_extend(state, proc->pid, run_start, time);
+        int run_start = ctx.time;
+        ctx.time += run_time;
+        gantt_extend(state, proc->pid, run_start, ctx.time);
 
         // 5. Check if the process has finished
         if (proc->remaining_time == 0)
         {
-            proc->finish_time = time;
-            log_process_finish(time, proc->pid);
-            completed++;
+            proc->finish_time = ctx.time;
+            log_process_finish(ctx.time, proc->pid);
+            ctx.completed++;
         }
         else
         {
@@ -201,8 +148,7 @@ int schedule_mlfq(SchedulerState *state, MLFQScheduler *mlfq_config)
             pq_push(&queues[proc->priority], proc); // Re-add to appropriate queue
         }
     }
-    calculate_metrics(state);
-    gantt_print(state);
+    finish_scheduler(state);
     // 6. Cleanup
     for (int i = 0; i < num_queues; i++)
     {

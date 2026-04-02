@@ -14,7 +14,9 @@ SRCS = src/main.c      \
        src/gantt.c     \
        src/metrics.c   \
        src/process.c   \
-       src/utils.c 
+       src/utils.c 	   \
+	   src/scheduler.c \
+	   src/sched_utils.c
 
 OBJS = $(SRCS:.c=.o)
 

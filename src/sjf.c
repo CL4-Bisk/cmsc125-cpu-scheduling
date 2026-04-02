@@ -8,82 +8,70 @@
 #include "../include/gantt.h"
 #include "../include/scheduler.h"
 #include "../include/metrics.h"
+#include "../include/sched_utils.h"
 
 int schedule_sjf(SchedulerState *state)
 {
     // Implementation for Shortest job first scheduling
+    SchedulerContext ctx;
+    ctx_init(&ctx, state);
 
-    int time = 0;
-    int completed = 0;
-    int num_processes = state->num_processes;
-    char last_pid[16] = "";
-
-    while (completed < num_processes)
+    while (ctx.completed < ctx.num_processes)
     {
         int shortest_burst_time = -1;
-        int shortest_burst_time_index = -1;
 
-        for (int i = 0; i < num_processes; i++)
+        for (int i = 0; i < ctx.num_processes; i++)
         {
-            if (state->processes[i].arrival_time <= time && state->processes[i].remaining_time > 0)
+            Process *proc = &state->processes[i];
+            if (proc->arrival_time <= ctx.time && proc->remaining_time > 0)
             {
-                if (shortest_burst_time == -1 || state->processes[i].remaining_time < shortest_burst_time)
+                if (shortest_burst_time == -1 || proc->remaining_time < state->processes[shortest_burst_time].remaining_time)
                 {
-                    shortest_burst_time = state->processes[i].remaining_time;
-                    shortest_burst_time_index = i;
+                    shortest_burst_time = i;
                 }
             }
         }
 
-        if (shortest_burst_time_index == -1)
+        if (shortest_burst_time == -1)
         {
             int next_arrival = -1;
-            for (int i = 0; i < num_processes; i++)
+            for (int i = 0; i < ctx.num_processes; i++)
             {
-                if (state->processes[i].remaining_time > 0 && state->processes[i].arrival_time > time)  // hasn't arrived yet
+                Process *proc = &state->processes[i];
+                if (proc->remaining_time > 0 && proc->arrival_time > ctx.time)
                 {
-                    if (next_arrival == -1 || state->processes[i].arrival_time < next_arrival)
+                    if (next_arrival == -1 || proc->arrival_time < next_arrival)
                     {
-                        next_arrival = state->processes[i].arrival_time;
+                        next_arrival = proc->arrival_time;
                     }
                 }
             }
 
             if (next_arrival != -1)
             {
-                gantt_add_entry(state, "IDLE", time, next_arrival);
-                time = next_arrival;  // jump to next arrival
+                ctx_handle_idle(state, &ctx, next_arrival);
             }
             else
             {
-                
-                break;  // no more processes
+                break; // no more processes
             }
             continue;
         }
-        else
-        {
-            Process *proc = &state->processes[shortest_burst_time_index];
+        
+        Process *proc = &state->processes[shortest_burst_time];
 
-            if (last_pid[0] != '\0' && strcmp(last_pid, proc->pid) != 0)
-            {
-                state->context_switches++; // Increment context switch count if switching to a different process
-                log_context_switch(time, last_pid, proc->pid);
-            }
-            strncpy(last_pid, proc->pid, 15);
-            last_pid[15] = '\0';
+        ctx_track_switch(state, &ctx, proc->pid);
 
-            log_process_start(time, proc->pid);
-            proc->start_time = time;
-            time += proc->remaining_time;
-            proc->finish_time = time;
-            gantt_add_entry(state, proc->pid, proc->start_time, proc->finish_time);
-            log_process_finish(proc->finish_time, proc->pid);
-            proc->remaining_time = 0;
-            completed++;
-        }
+        log_process_start(ctx.time, proc->pid);
+        proc->start_time = ctx.time;
+        ctx.time += proc->remaining_time;
+        proc->finish_time = ctx.time;
+        gantt_add_entry(state, proc->pid, proc->start_time, proc->finish_time);
+        log_process_finish(proc->finish_time, proc->pid);
+        proc->remaining_time = 0;
+        ctx.completed++;
+        
     }
-    calculate_metrics(state);
-    gantt_print(state);
+    finish_scheduler(state);
     return 0;
 }

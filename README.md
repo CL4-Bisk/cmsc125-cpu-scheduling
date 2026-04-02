@@ -203,9 +203,7 @@ make clean
 # Example Test Usage
 
 ```bash
-make ${name_of_scheduler}_input-${input_number}
-
-ex. make fcfs_input-1
+./schedsim --algorithm=FCFS --input=tests/workload1.txt
 ```
 
 ```
@@ -247,6 +245,21 @@ Average    |       |       |       | 515.0 | 359.0 | 359.0
 Warning: Process C is experiencing the convoy effect (waiting time: 400)
 Warning: Process D is experiencing the convoy effect (waiting time: 545)
 Warning: Process E is experiencing the convoy effect (waiting time: 620)
+```
+
+### VI. Additional tests
+In case of additional tests for each schedulers, input the following:
+```bash
+make {type_of_scheduler}_input-{input_number}
+
+ex. make fcfs_input-1
+
+other types include before the _input-{input_number}:
+fcfs
+rr
+sjf
+stcf
+mlfq
 ```
 
 # Limitations and Bugs
